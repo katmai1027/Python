@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}ホームページ{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="style.css">
+  <div class="base" >
+    <div class="class1">
+      <a href="/"><font size="6">🏠</font></a><br><br><br>
+      <a href="/gonotice"><font size="6">🔔</font></a><br><br>
+      
+
+    </div>
+    <div class="class2">
+      <iframe src="{{ url_for('show_dotw') }}" width="500px" height="130px" id="c1"></iframe>
+      <iframe src="{{ url_for('show_c1',TLmode=TLmode) }}" width="500px"height="1000px" id="c2"></iframe>
+    </div>
+<div class="class3">
+    <form action="/search" method="POST">
+
+    <textarea class="textlines" name ="search" placeholder="フリーワード検索"></textarea>
+    <div align="right"><input type="submit" value="検索"></div>
+    <br>
+</form>
+
+<form action="/user" method="POST">
+    <textarea class="textlines" name ="user" placeholder="＠ユーザー/ID検索"></textarea>
+    <div align="right"><input type="submit" value="検索"></div>
+</form>
+<div align="center"><br>画像読込<br>
+{% if datasaver==1 %}
+<a href="/settings/datasaver?value=False"><img src='/static/small_image.png' height=40px align='right'></a>
+{% else %}
+<a href="/settings/datasaver?value=True"><img src='/static/orig_image.png' height=40px align='right'></a>
+{% endif %}
+</div>
+
+<div align="center"style="margin-left:20px;margin-top: 30px;">
+
+
+<iframe src="{{ url_for('show_ver') }}" width="220px" height="120px" id="r2" style="margin-left:50px;margin-top: 30px;">
+
+ 
+  </div>
+{% endblock %}

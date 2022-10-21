@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+<script type="text/javascript">
+    (function ($) {
+        $.fn.moreClick = function (options) {
+            var defaults = {
+                defaultNum: 3, //最初に表示しておく個数
+                loadNum: 3, // ボタンクリックで読み込む個数
+                loadTxt: '<img src="/static/ajax-loader.gif" alt="Now Loading...">', // Loading中の画像
+                moreBtnTxt: 'もっと見る', // もっと見るボタンのテキスト
+                newBtnTxt: '更新', // 更新ボタンのテキスト
+                fadeSpeed: 1000, // フェードスピード
+            };
+
+            var params = $.extend(defaults, options);
+
+            var defaultNum = params.defaultNum,
+                loadNum = params.loadNum,
+                loadTxt = params.loadTxt,
+                moreBtnTxt = params.moreBtnTxt,
+                fadeSpeed = params.fadeSpeed,
+                jsonPath_first = params.jsonPath_first,
+                jsonPath_add = params.jsonPath_add;
+            jsonPath_new = params.jsonPath_new;
+            var setArea = $(params.setArea);
+
+            // 記事の後ろに「もっと見る」ボタンを設置する
+            setArea.after('<div id="btnMore">' + moreBtnTxt + '</div>');
+            var setMore = setArea.next('#btnMore');
+            setMore.hide();
+            // 記事が読み込まれるまでの間、Loading画像を表示する
+            setMore.after('<div id="nowLoading" align="center">' + loadTxt + '</div>');
+
+            // 記事の前に「更新」ボタンを設置する
+
+            setArea.before('<div id="btnNew"><font size="5" color=#000099>更新</font><hr></div>');
+            var setNew = setArea.prev('#btnNew');
+            setNew.hide();
+
+
+            //最初に表示する記事
+            $.ajax({
+                url: jsonPath_first,
+                dataType: 'text',
+                success: function (data) {
+
+                    $('<div class="loadItem">' + data + '</div>').appendTo(setArea).animate(fadeSpeed);
+
+                    setMore.fadeIn();
+                    setNew.fadeIn();
+
+                }, //success
+                complete: function () {
+                    $('#nowLoading').each(function () {
+                        $(this).remove();
+                    });
+                    return false;
+                } //complete
+            });
+
+            //もっと見るボタン押下時に表示する
+            setMore.click(function () {
+                setMore.after('<div id="nowLoading" align="center">' + loadTxt + '</div>');
+                setMore.hide();
+                $.ajax({
+                    url: jsonPath_add,
+                    dataType: 'text',
+                    success: function (data) {
+
+                        $('<div class="loadItem">' + data + '</div>').appendTo(setArea).animate(fadeSpeed);
+
+                        setMore.show();
+
+                    }, //success
+                    complete: function () {
+                        $('#nowLoading').each(function () {
+                            $(this).remove();
+                        });
+                        return false;
+                    } //complete
+                });
+                return false;
+            }); //End もっと見るボタン押下時の動作処理終了
+
+            //更新ボタン押下時に表示する
+            setNew.click(function () {
+                setNew.after('<div id="nowLoading" align="center">' + loadTxt + '</div>');
+                setNew.hide();
+                $.ajax({
+                    url: jsonPath_new,
+                    dataType: 'text',
+                    success: function (data) {
+
+                        $('<div class="loadItem">' + data + '</div>').prependTo(setArea).animate(fadeSpeed);
+                        setNew.show();
+
+
+                    }, //success
+                    complete: function () {
+                        $('#nowLoading').each(function () {
+                            $(this).remove();
+                        });
+                        return false;
+                    } //complete
+                });
+                return false;
+            }); //End 更新ボタン押下時の動作処理終了
+
+        };
+    })(jQuery);
+
+    $(function () {
+        $("#list_wrapper").moreClick({
+            jsonPath_first: '/tl_load_first', // 初期状態での表示につかうjsonファイル
+            jsonPath_add: '/tl_load_add', // 追加読み込み時に使うjsonファイル
+            jsonPath_new: '/tl_load_new', // 更新ボタン
+            setArea: '#news_list' // 反映するエリア
+        });
+    });
+
+</script>
+{% endblock %}
+{% block content %}
+
+<div id="list_wrapper">
+    <div id="news_list"></div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+.textlines {
+    border: 2px solid #0a0;  /* 枠線 */
+    border-radius: 0.67em;   /* 角丸 */
+    padding: 0.5em;          /* 内側の余白量 */
+    background-color: snow;  /* 背景色 */
+    width: 90%;             /* 横幅 */
+    height: 50px;           /* 高さ */
+    font-size: 1em;          /* 文字サイズ */
+    line-height: 1.2;        /* 行の高さ */
+}
+</style>
+</head>
+<body>
+{% block content %}
+{{ message | safe  }}
+{% endblock %}
+<script>
+   function DisableButton(b)
+   {
+      b.disabled = true;
+      b.value = 'Submitting';
+      b.form.submit();
+   }
+</script>
+<form action="/result" method="POST" enctype="multipart/form-data">
+
+    <textarea class="textlines" name ="tweet_content" placeholder="いまどうしてる？"></textarea>
+<input type="submit"value="Tweet" onclick="DisableButton(this);">
+&emsp;&emsp;<input type="file" name="upload_file" multiple="multiple" accept="image/*">
+    
+</form>
+</body>
+</html>

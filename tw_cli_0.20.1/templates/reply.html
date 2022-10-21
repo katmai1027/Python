@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+<script type="text/javascript">
+    (function ($) {
+        $.fn.replyClick = function (options) {
+            var defaults = {
+                defaultNum: 3, //最初に表示しておく個数
+                loadNum: 3, // ボタンクリックで読み込む個数
+                loadTxt: '<img src="/static/ajax-loader.gif" alt="Now Loading...">', // Loading中の画像
+                moreBtnTxt: 'リプライを表示', // もっと見るボタンのテキスト
+                fadeSpeed: 1000, // フェードスピード
+            };
+
+            var params = $.extend(defaults, options);
+
+            var defaultNum = params.defaultNum,
+                loadNum = params.loadNum,
+                loadTxt = params.loadTxt,
+                moreBtnTxt = params.moreBtnTxt,
+                fadeSpeed = params.fadeSpeed,
+                jsonPath_first = "/reply_load_first",
+
+                jsonPath_add = "/reply_load_add";
+            var setArea = $(params.setArea);
+
+            // 記事の後ろに「もっと見る」ボタンを設置する
+            setArea.after('<div id="btnMore">' + moreBtnTxt + '</div>');
+            var setMore = setArea.next('#btnMore');
+            setMore.hide();
+            // 記事が読み込まれるまでの間、Loading画像を表示する
+            setMore.after('<div id="nowLoading" align="center">' + loadTxt + '</div>');
+
+
+            //最初に表示する記事
+            $.ajax({
+                url: jsonPath_first,
+                dataType: 'text',
+                success: function (data) {
+
+                    $('<div class="loadItem">' + data + '</div>').appendTo(setArea).animate(fadeSpeed);
+
+                    setMore.fadeIn();
+
+
+                }, //success
+                complete: function () {
+                    $('#nowLoading').each(function () {
+                        $(this).remove();
+                    });
+                    return false;
+                } //complete
+            });
+
+            //もっと見るボタン押下時に表示する
+            setMore.click(function () {
+                setMore.after('<div id="nowLoading" align="center">' + loadTxt + '</div>');
+                setMore.hide();
+                $.ajax({
+                    url: jsonPath_add,
+                    dataType: 'text',
+                    success: function (data) {
+
+                        $('<div class="loadItem">' + data + '</div>').appendTo(setArea).animate(fadeSpeed);
+
+                        setMore.hide();//一回しか押させない。おわったら隠す。
+
+                    }, //success
+                    complete: function () {
+                        $('#nowLoading').each(function () {
+                            $(this).remove();
+                        });
+                        return false;
+                    } //complete
+                });
+                return false;
+            }); //End もっと見るボタン押下時の動作処理終了
+
+
+
+        };
+        $(function () {
+            $("#reply_load").replyClick({
+                jsonPath_first: '/reply_load_first', // 初期状態での表示につかうjsonファイル
+                jsonPath_add: '/reply_load_add', // reply読み込み時に使うjsonファイル
+                setArea: '#reply_list' // 反映するエリア
+            });
+        });
+    })(jQuery);
+</script>
+{% endblock %}
+{% block content %}
+
+<div id="reply_load">
+    <div id="reply_list"></div>
+</div>
+
+
+{% endblock %}

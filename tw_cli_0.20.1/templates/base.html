@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>あっきー専用-{% block title %}{% endblock %}</title>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+
+
+
+
+
+    <script type="text/javascript">
+        //いいねとRTボタンに関する関数
+
+        function fav_click(tweet_id) {
+            document.getElementById(tweet_id).src = "/static/faved.png";
+            $.getJSON(`/${tweet_id}`, {
+            }, function (data) {
+                $("#result").text(data.result)
+            });
+        }
+        function unfav_click(tweet_id) {
+            document.getElementById(tweet_id).src = "/static/fav.png";
+            $.getJSON(`/${tweet_id}`, {
+            }, function (data) {
+                $("#result").text(data.result)
+            });
+        }
+        function rt_click(tweet_id) {
+            document.getElementById(tweet_id).src = "/static/retweeted.png";
+            $.getJSON(`/${tweet_id}`, {
+            }, function (data) {
+                $("#result").text(data.result)
+            });
+        }
+        function unrt_click(tweet_id) {
+            document.getElementById(tweet_id).src = "/static/retweet.png";
+            $.getJSON(`/${tweet_id}`, {
+            }, function (data) {
+                $("#result").text(data.result)
+            });
+        }
+    </script>
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body>
+
+    <script>
+        function DisableButton(b) {
+            b.disabled = true;
+            b.value = 'Submitting';
+            b.form.submit();
+        }
+    </script>
+
+
+
+
+
+    {% block content %}
+    {% endblock %}
+
+
+
+    <script>
+        var pics_rt = new Array("/static/retweet.png", "/static/retweeted.png");
+        var pics_fav = new Array("/static/fav.png", "/static/faved.png");
+        var num = 0;
+
+        function retweet_ch() {
+            if (num == 1) {
+                num = 0;
+            }
+            else {
+                num++;
+            }
+            document.getElementById("rt").src = pics_rt[num];
+
+        }
+
+        function retweeted_ch() {
+            if (num == 2) {
+                num = 0;
+            }
+            document.getElementById("rt").src = pics_rt[num];
+
+            num++;
+
+        }
+
+        function fav_ch() {
+            if (num == 1) {
+                num = 0;
+            }
+            else {
+                num++;
+            }
+            document.getElementById("fav").src = pics_fav[num];
+
+        }
+
+        function faved_ch() {
+            if (num == 2) {
+                num = 0;
+            }
+
+            document.getElementById("fav").src = pics_fav[num];
+
+            num++;
+        }
+    </script>
+
+</body>
+
+</html>
